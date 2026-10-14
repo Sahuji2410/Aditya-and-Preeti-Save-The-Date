@@ -166,7 +166,7 @@ body.locked { overflow: hidden; }
 }
 
 .palm-right {
-  left: calc(746 * var(--u));
+  left: calc(777 * var(--u));
   top: calc(760 * var(--u));
   width: calc(341 * var(--u));
   transform-origin: 88% 100%;
@@ -264,7 +264,7 @@ body.locked { overflow: hidden; }
   pointer-events: none;
   transition: opacity .5s ease;
 }
-.scratch-hint.show { opacity: 1; animation: hint 1.6s ease-in-out infinite; }
+.scratch-hint.show { opacity: 1;}
 
 @keyframes hint {
   0%, 100% { opacity: 1; }

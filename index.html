@@ -30,8 +30,8 @@
       <div class="water"><img src="assets/water.webp" alt=""></div>
 
       <!-- foliage + garlands -->
-      <img class="piece leaf-left sway-base"  src="assets/leaf-left.webp"  alt="">
-      <img class="piece palm-right sway-base" src="assets/palm-right.webp" alt="">
+      <img class="piece leaf-left sway-base garland-left"  src="assets/leaf-left.webp"  alt="">
+      <img class="piece palm-right sway-base garland-right" src="assets/palm-right.webp" alt="">
       <img class="piece garland garland-top"  src="assets/garland-a.webp"  alt="">
       <img class="piece garland garland-tree1" src="assets/garland-b.webp" alt="">
       <img class="piece garland garland-tree2" src="assets/garland-a.webp" alt="">
@@ -49,9 +49,9 @@
       </div>
     </section>
 
-    <!-- background music: unlocked by the "tap to open", plays on the card -->
-    <audio id="music" src="https://cdn.shopify.com/s/files/1/0778/9474/6301/files/Chaand_Baaliyan_On_Piano.mp3?v=1791735345" loop preload="none"></audio>
-    <button class="music-btn" id="musicBtn" type="button" aria-label="Pause music" hidden>
+    <!-- background music: starts automatically when the link is opened -->
+    <audio id="music" src="https://cdn.shopify.com/s/files/1/0778/9474/6301/files/Chaand_Baaliyan_On_Piano.mp3?v=1791735345" loop preload="auto" autoplay playsinline></audio>
+    <button class="music-btn" id="musicBtn" type="button" aria-label="Play music">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
     </button>
 

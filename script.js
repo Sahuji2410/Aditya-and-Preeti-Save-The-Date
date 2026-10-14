@@ -8,23 +8,10 @@ const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 document.body.classList.add("locked");
 
 // ---------- Music ----------
-// Phones only allow sound after a tap, so the "tap to open" unlocks the
-// audio (a silent play + pause) and the song starts when the card appears.
+// Starts playing automatically as soon as the link/page is opened.
+// Fallback listeners ensure playback starts on the very first touch/click if the browser blocks initial unmuted autoplay.
 const music = document.getElementById("music");
 const musicBtn = document.getElementById("musicBtn");
-
-function unlockMusic() {
-  music.muted = true;
-  music.play().then(() => {
-    if (!revealed) { music.pause(); music.currentTime = 0; }
-    music.muted = false;
-  }).catch(() => { music.muted = false; });
-}
-
-function startMusic() {
-  musicBtn.hidden = false;
-  music.play().then(setMusicUi).catch(setMusicUi);
-}
 
 function setMusicUi() {
   const on = !music.paused;
@@ -32,12 +19,56 @@ function setMusicUi() {
   musicBtn.setAttribute("aria-label", on ? "Pause music" : "Play music");
 }
 
+function removeAutoplayFallbacks() {
+  ["pointerdown", "touchstart", "click", "keydown"].forEach((evt) => {
+    window.removeEventListener(evt, handleFirstInteraction, true);
+  });
+}
+
+function handleFirstInteraction() {
+  if (music.paused) {
+    startMusic();
+  } else {
+    removeAutoplayFallbacks();
+  }
+}
+
+function startMusic() {
+  musicBtn.hidden = false;
+  if (!music.paused) {
+    setMusicUi();
+    return;
+  }
+  const playPromise = music.play();
+  if (playPromise !== undefined) {
+    playPromise
+      .then(() => {
+        setMusicUi();
+        removeAutoplayFallbacks();
+      })
+      .catch(() => {
+        setMusicUi();
+      });
+  }
+}
+
+// Fallback: if browser autoplay policy blocks unmuted audio on initial load,
+// start playback as soon as user touches or clicks anywhere on the screen
+["pointerdown", "touchstart", "click", "keydown"].forEach((evt) => {
+  window.addEventListener(evt, handleFirstInteraction, true);
+});
+
 music.addEventListener("playing", setMusicUi);
 music.addEventListener("pause", setMusicUi);
 
-musicBtn.addEventListener("click", () => {
-  if (music.paused) music.play().then(setMusicUi).catch(setMusicUi);
-  else { music.pause(); setMusicUi(); }
+musicBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (music.paused) {
+    music.play().then(setMusicUi).catch(setMusicUi);
+  } else {
+    music.pause();
+    setMusicUi();
+  }
 });
 
 // pause when the guest leaves the tab, resume when they come back
@@ -47,9 +78,14 @@ document.addEventListener("visibilitychange", () => {
   else if (!document.hidden && pausedByHide) { pausedByHide = false; music.play().catch(() => {}); }
 });
 
+// Start immediately on opening the link
+startMusic();
+window.addEventListener("DOMContentLoaded", startMusic);
+window.addEventListener("load", startMusic);
+
 // ---------- Screen 1 → Screen 2 ----------
 const video = document.getElementById("introVideo");
-const PLAY_SECONDS = 3; // how much of the intro video plays before the card fades in
+const PLAY_SECONDS = 1.3; // how much of the intro video plays before the card fades in
 
 let opened = false;
 let revealed = false;
@@ -70,7 +106,7 @@ function openInvite() {
   if (opened) return;
   opened = true;
   intro.classList.add("open");
-  unlockMusic();
+  startMusic();
 
   if (reduced) return revealCard();
 
