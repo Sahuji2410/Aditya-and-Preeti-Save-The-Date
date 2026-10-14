@@ -150,7 +150,7 @@ const dateImg = document.getElementById("date");
 const scratchHint = document.getElementById("scratchHint");
 
 // flower spans in design pixels (see .flowers in style.css)
-const FLOWER_BOX = { x: 285, y: 2170, w: 170, h: 134 };
+const FLOWER_BOX = { x: 285, y: 2330, w: 170, h: 134 };
 const CARD_WIDTH = 1080;
 const CARD_HEIGHT = 3840;
 const SCALE = 2;            // canvas pixels per design pixel
@@ -173,7 +173,7 @@ async function setupScratch() {
 
   let bg, sprite;
   try {
-    [bg, sprite] = await Promise.all([loadImage("assets/new-card-bg.webp"), loadImage("assets/flowers.webp")]);
+    [bg, sprite] = await Promise.all([loadImage("assets/new-card-bg-updated.png"), loadImage("assets/flowers.webp")]);
   } catch {
     dateImg.classList.add("show", "revealed"); // images failed: just show the date
     return;
