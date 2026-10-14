@@ -151,6 +151,8 @@ const scratchHint = document.getElementById("scratchHint");
 
 // flower spans in design pixels (see .flowers in style.css)
 const FLOWER_BOX = { x: 285, y: 2170, w: 170, h: 134 };
+const CARD_WIDTH = 1080;
+const CARD_HEIGHT = 3840;
 const SCALE = 2;            // canvas pixels per design pixel
 const BRUSH = 34 * SCALE;   // scratch radius
 const GRID_X = 8, GRID_Y = 6;
@@ -171,20 +173,23 @@ async function setupScratch() {
 
   let bg, sprite;
   try {
-    [bg, sprite] = await Promise.all([loadImage("assets/card-bg.webp"), loadImage("assets/flowers.webp")]);
+    [bg, sprite] = await Promise.all([loadImage("assets/new-card-bg.webp"), loadImage("assets/flowers.webp")]);
   } catch {
     dateImg.classList.add("show", "revealed"); // images failed: just show the date
     return;
   }
   const sw = sprite.naturalWidth / 3;
+  const sourceScaleX = bg.naturalWidth / CARD_WIDTH;
+  const sourceScaleY = bg.naturalHeight / CARD_HEIGHT;
+  const canvasScaleY = sourceScaleY / sourceScaleX;
 
   flowers.querySelectorAll("span").forEach((span, i) => {
     const canvas = document.createElement("canvas");
     canvas.width = FLOWER_BOX.w * SCALE;
-    canvas.height = FLOWER_BOX.h * SCALE;
+    canvas.height = Math.round(FLOWER_BOX.h * canvasScaleY * SCALE);
     const ctx = canvas.getContext("2d");
     const x = FLOWER_BOX.x + i * FLOWER_BOX.w;
-    ctx.drawImage(bg, x, FLOWER_BOX.y, FLOWER_BOX.w, FLOWER_BOX.h, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bg, x * sourceScaleX, FLOWER_BOX.y * sourceScaleY, FLOWER_BOX.w * sourceScaleX, FLOWER_BOX.h * sourceScaleY, 0, 0, canvas.width, canvas.height);
     ctx.drawImage(sprite, i * sw, 0, sw, sprite.naturalHeight, 0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineCap = ctx.lineJoin = "round";
@@ -259,20 +264,21 @@ flowers.addEventListener("pointermove", (e) => {
 function petalBurst() {
   if (reduced) return;
   const u = card.clientWidth / 1080;
+  const v = card.clientHeight / CARD_HEIGHT;
   const colors = ["#f07a5a", "#f6a07e", "#ffd2b8", "#f4b942", "#ee8fa6"];
   for (let i = 0; i < 28; i++) {
     const p = document.createElement("i");
     p.className = "petal";
     p.style.left = 540 * u + "px";
-    p.style.top = 2237 * u + "px";
+    p.style.top = 2237 * v + "px";
     p.style.background = colors[i % colors.length];
     card.appendChild(p);
     const angle = Math.random() * Math.PI * 2;
     const dist = (180 + Math.random() * 320) * u;
-    const dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist * 0.7;
+    const dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist * 0.7 * v / u;
     p.animate([
       { transform: "translate(-50%,-50%) scale(.4) rotate(0deg)", opacity: 1 },
-      { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy + 120 * u}px)) scale(1) rotate(${360 + Math.random() * 360}deg)`, opacity: 0 },
+      { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy + 120 * v}px)) scale(1) rotate(${360 + Math.random() * 360}deg)`, opacity: 0 },
     ], { duration: 1300 + Math.random() * 900, easing: "cubic-bezier(.2,.7,.3,1)" }).onfinish = () => p.remove();
   }
 }

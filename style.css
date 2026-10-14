@@ -96,7 +96,7 @@ body.locked { overflow: hidden; }
 .card {
   position: relative;
   width: 100%;
-  aspect-ratio: 1080 / 3840;
+  aspect-ratio: 725 / 2170;
   overflow: hidden;
   container-type: inline-size;
   opacity: 0;
@@ -104,7 +104,10 @@ body.locked { overflow: hidden; }
 }
 .card.show { opacity: 1; }
 
-.card > * { --u: calc(100cqw / 1080); }
+.card > * {
+  --u: calc(100cqw / 1080);
+  --v: calc(100cqw / 1282.95);
+}
 
 .card-bg {
   display: block;
@@ -123,12 +126,12 @@ body.locked { overflow: hidden; }
 /* sea in front of the mountains */
 .water {
   left: 0;
-  top: calc(1160 * var(--u));
+    top: calc(1160 * var(--v));
   width: 100%;
-  height: calc(297 * var(--u));
+    height: calc(297 * var(--v));
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(transparent, #000 calc(10 * var(--u)));
-          mask-image: linear-gradient(transparent, #000 calc(10 * var(--u)));
+    -webkit-mask-image: linear-gradient(transparent, #000 calc(10 * var(--v)));
+      mask-image: linear-gradient(transparent, #000 calc(10 * var(--v)));
 }
 .water img {
   position: absolute;
@@ -159,7 +162,7 @@ body.locked { overflow: hidden; }
 
 .leaf-left {
   left: calc(-4 * var(--u));
-  top: calc(1110 * var(--u));
+  top: calc(1110 * var(--v));
   width: calc(295 * var(--u));
   transform-origin: 0 100%;
   animation: sway-l 3.2s ease-in-out infinite;
@@ -167,7 +170,7 @@ body.locked { overflow: hidden; }
 
 .palm-right {
   left: calc(777 * var(--u));
-  top: calc(760 * var(--u));
+  top: calc(760 * var(--v));
   width: calc(341 * var(--u));
   transform-origin: 88% 100%;
   animation: sway-r 3.6s ease-in-out infinite;
@@ -187,9 +190,14 @@ body.locked { overflow: hidden; }
   animation: swing 2.4s ease-in-out infinite;
 }
 /* the artwork already has this tassel string, so show only the marigold strand */
-.garland-top   { left: calc(24 * var(--u)); top: 0;                        width: calc(145 * var(--u)); clip-path: inset(0 0 0 52%); }
-.garland-tree1 { left: calc(48 * var(--u)); top: calc(2420 * var(--u));     width: calc(101 * var(--u)); animation-delay: -.8s; }
-.garland-tree2 { left: calc(20 * var(--u)); top: calc(2640 * var(--u));     width: calc(110 * var(--u)); animation-delay: -1.6s; }
+.garland-top        { left: calc(24 * var(--u));  top: 0;                         width: calc(145 * var(--u)); clip-path: inset(0 0 0 52%); }
+.garland-tree1      { left: calc(48 * var(--u));  top: calc(2420 * var(--v));      width: calc(101 * var(--u)); animation-delay: -.8s; }
+.garland-tree2      { left: calc(20 * var(--u));  top: calc(2640 * var(--v));      width: calc(110 * var(--u)); animation-delay: -1.6s; }
+.bottom-flower { left: calc(750 * var(--u)); top: calc(2880 * var(--v)); width: calc(291 * var(--u)); }
+.bottom-flower-1 { clip-path: inset(33.3% 88% 30% 0); transform-origin: 5.8% 34%; }
+.bottom-flower-2 { clip-path: inset(37.5% 66% 0 17%); transform-origin: 25.4% 38.2%; animation-delay: -1.2s; }
+.bottom-flower-3 { clip-path: inset(30.5% 45% 33.3% 42%); transform-origin: 48.1% 31.2%; }
+.bottom-flower-4 { clip-path: inset(0 0 4.4% 68%); transform-origin: 73.9% .2%; animation-delay: -1.2s; }
 
 @keyframes swing {
   0%, 100% { transform: rotate(2.6deg); }
@@ -200,9 +208,9 @@ body.locked { overflow: hidden; }
 .flowers {
   z-index: 2;
   left: calc(285 * var(--u));
-  top: calc(2170 * var(--u));
+  top: calc(2170 * var(--v));
   width: calc(510 * var(--u));
-  height: calc(134 * var(--u));
+  height: calc(134 * var(--v));
   display: flex;
 }
 .flowers span {
@@ -238,7 +246,7 @@ body.locked { overflow: hidden; }
 /* the date hides under the flowers */
 .date {
   left: calc(310 * var(--u));
-  top: calc(2221 * var(--u));
+  top: calc(2221 * var(--v));
   width: calc(459 * var(--u));
   opacity: 0;
 }
@@ -255,7 +263,7 @@ body.locked { overflow: hidden; }
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(2335 * var(--u));
+  top: calc(2335 * var(--v));
   text-align: center;
   font-size: calc(34 * var(--u));
   letter-spacing: .12em;
@@ -275,7 +283,7 @@ body.locked { overflow: hidden; }
   position: absolute;
   z-index: 3;
   width: calc(16 * var(--u));
-  height: calc(26 * var(--u));
+  height: calc(26 * var(--v));
   border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
   pointer-events: none;
 }
@@ -283,7 +291,7 @@ body.locked { overflow: hidden; }
 .countdown {
   left: 0;
   right: 0;
-  top: calc(2705 * var(--u));
+  top: calc(2705 * var(--v));
   display: flex;
   justify-content: center;
   align-items: baseline;
@@ -314,7 +322,7 @@ body.locked { overflow: hidden; }
 /* scroll reveal */
 .reveal:not(.flowers) {
   opacity: 0;
-  transform: translateY(calc(40 * var(--u)));
+  transform: translateY(calc(40 * var(--v)));
   transition: opacity .7s ease, transform .7s ease;
 }
 .reveal.in:not(.flowers) { opacity: 1; transform: none; }
