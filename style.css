@@ -96,7 +96,7 @@ body.locked { overflow: hidden; }
 .card {
   position: relative;
   width: 100%;
-  aspect-ratio: 724 / 2172;
+  aspect-ratio: 1080 / 3840;
   overflow: hidden;
   container-type: inline-size;
   opacity: 0;
@@ -106,7 +106,7 @@ body.locked { overflow: hidden; }
 
 .card > * {
   --u: calc(100cqw / 1080);
-  --v: calc(100cqw / 1280);
+  --v: calc(100cqw / 1080);
 }
 
 .card > :not(.card-bg) {
@@ -122,16 +122,25 @@ body.locked { overflow: hidden; }
 
 .piece,
 .water,
+.date-mask,
 .flowers,
 .date,
 .countdown {
   position: absolute;
 }
 
+.date-mask {
+  left: calc(285 * var(--u));
+  top: calc(2128 * var(--v));
+  width: calc(510 * var(--u));
+  height: calc(134 * var(--v));
+  pointer-events: none;
+}
+
 /* sea in front of the mountains */
 .water {
   left: 0;
-    top: calc(1235 * var(--v));
+    top: calc(1131 * var(--v));
   width: 100%;
     height: calc(297 * var(--v));
   overflow: hidden;
@@ -196,8 +205,8 @@ body.locked { overflow: hidden; }
 }
 /* the artwork already has this tassel string, so show only the marigold strand */
 .garland-top        { left: calc(24 * var(--u));  top: 0;                         width: calc(145 * var(--u)); clip-path: inset(0 0 0 52%); }
-.garland-tree1      { left: calc(48 * var(--u));  top: calc(2600 * var(--v));      width: calc(101 * var(--u)); animation-delay: -.8s; }
-.garland-tree2      { left: calc(20 * var(--u));  top: calc(2800 * var(--v));      width: calc(110 * var(--u)); animation-delay: -1.6s; }
+.garland-tree1      { left: calc(48 * var(--u));  top: calc(2362 * var(--v));      width: calc(101 * var(--u)); animation-delay: -.8s; }
+.garland-tree2      { left: calc(20 * var(--u));  top: calc(2569 * var(--v));      width: calc(110 * var(--u)); animation-delay: -1.6s; }
 .bottom-flower { left: calc(750 * var(--u)); top: calc(2967 * var(--v)); width: calc(291 * var(--u)); }
 .bottom-flower-1 { clip-path: inset(33.3% 88% 30% 0); transform-origin: 5.8% 34%; }
 .bottom-flower-2 { clip-path: inset(37.5% 66% 0 17%); transform-origin: 25.4% 38.2%; animation-delay: -1.2s; }
@@ -213,7 +222,7 @@ body.locked { overflow: hidden; }
 .flowers {
   z-index: 2;
   left: calc(285 * var(--u));
-  top: calc(2330 * var(--v));
+  top: calc(2128 * var(--v));
   width: calc(510 * var(--u));
   height: calc(134 * var(--v));
   display: flex;
@@ -233,7 +242,7 @@ body.locked { overflow: hidden; }
 
 /* scratch layer: the canvas takes over from the sprite */
 .flowers canvas { display: block; width: 100%; height: 100%; }
-.flowers span:has(canvas) { background: none; transition-delay: 0s; }
+.flowers span:has(canvas) { background: none; }
 .flowers.scratchable { touch-action: none; cursor: pointer; }
 .flowers.scratchable span:not(.gone) { animation: breathe 1.4s ease-in-out infinite; }
 .flowers.scratchable span:nth-child(2) { animation-delay: .2s; }
@@ -251,7 +260,7 @@ body.locked { overflow: hidden; }
 /* the date hides under the flowers */
 .date {
   left: calc(310 * var(--u));
-  top: calc(2381 * var(--v));
+  top: calc(2194 * var(--v));
   width: calc(459 * var(--u));
   opacity: 0;
 }
@@ -268,7 +277,7 @@ body.locked { overflow: hidden; }
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(2495 * var(--v));
+  top: calc(2298 * var(--v));
   text-align: center;
   font-size: calc(34 * var(--u));
   letter-spacing: .12em;
@@ -296,7 +305,7 @@ body.locked { overflow: hidden; }
 .countdown {
   left: 0;
   right: 0;
-  top: calc(2698 * var(--v));
+  top: calc(2665 * var(--v));
   display: flex;
   justify-content: center;
   align-items: baseline;

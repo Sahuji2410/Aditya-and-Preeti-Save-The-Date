@@ -90,9 +90,16 @@ const PLAY_SECONDS = 1.3; // how much of the intro video plays before the card f
 let opened = false;
 let revealed = false;
 
-function revealCard() {
+async function revealCard() {
   if (revealed) return;
   revealed = true;
+  try {
+    await scratchSetup;
+  } catch (error) {
+    revealed = false;
+    console.error(error);
+    return;
+  }
   card.classList.add("show");
   card.setAttribute("aria-hidden", "false");
   intro.classList.add("done");
@@ -128,7 +135,7 @@ const io = new IntersectionObserver((entries) => {
     const el = entry.target;
     el.classList.add("in");
     if (el.classList.contains("flowers")) {
-      setTimeout(setupScratch, 1200); // once the flowers have popped in
+      setTimeout(() => el.classList.add("scratchable"), 1200);
     }
     io.unobserve(el);
   }
@@ -150,7 +157,7 @@ const dateImg = document.getElementById("date");
 const scratchHint = document.getElementById("scratchHint");
 
 // flower spans in design pixels (see .flowers in style.css)
-const FLOWER_BOX = { x: 285, y: 2330, w: 170, h: 134 };
+const FLOWER_BOX = { x: 285, y: 2128, w: 170, h: 134 };
 const CARD_WIDTH = 1080;
 const CARD_HEIGHT = 3840;
 const SCALE = 2;            // canvas pixels per design pixel
@@ -164,6 +171,26 @@ function loadImage(src) {
   return img.decode().then(() => img);
 }
 
+function hidePrintedDate(ctx, canvas) {
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const rowAt = (designY) => Math.round((designY - FLOWER_BOX.y) * canvas.height / FLOWER_BOX.h);
+  const cleanTop = rowAt(2150);
+  const cleanBottom = canvas.height - 1;
+
+  for (let x = 0; x < canvas.width; x++) {
+    const top = (cleanTop * canvas.width + x) * 4;
+    const bottom = (cleanBottom * canvas.width + x) * 4;
+    for (let y = 0; y < canvas.height; y++) {
+      const offset = (y * canvas.width + x) * 4;
+      const mix = Math.max(0, (y - cleanTop) / (cleanBottom - cleanTop));
+      for (let channel = 0; channel < 3; channel++) {
+        pixels.data[offset + channel] = pixels.data[top + channel] * (1 - mix) + pixels.data[bottom + channel] * mix;
+      }
+    }
+  }
+  ctx.putImageData(pixels, 0, 0);
+}
+
 let scratchReady = false;
 const pads = [];
 
@@ -173,15 +200,21 @@ async function setupScratch() {
 
   let bg, sprite;
   try {
-    [bg, sprite] = await Promise.all([loadImage("assets/new-card-bg-updated.png"), loadImage("assets/flowers.webp")]);
+    [bg, sprite] = await Promise.all([loadImage("assets/main-website-final.webp"), loadImage("assets/flowers.webp")]);
   } catch {
-    dateImg.classList.add("show", "revealed"); // images failed: just show the date
-    return;
+    throw new Error("Unable to load the artwork needed for the scratch-to-reveal date.");
   }
   const sw = sprite.naturalWidth / 3;
   const sourceScaleX = bg.naturalWidth / CARD_WIDTH;
   const sourceScaleY = bg.naturalHeight / CARD_HEIGHT;
   const canvasScaleY = sourceScaleY / sourceScaleX;
+
+  const mask = document.getElementById("dateMask");
+  mask.width = FLOWER_BOX.w * 3 * SCALE;
+  mask.height = Math.round(FLOWER_BOX.h * canvasScaleY * SCALE);
+  const maskCtx = mask.getContext("2d");
+  maskCtx.drawImage(bg, FLOWER_BOX.x * sourceScaleX, FLOWER_BOX.y * sourceScaleY, FLOWER_BOX.w * 3 * sourceScaleX, FLOWER_BOX.h * sourceScaleY, 0, 0, mask.width, mask.height);
+  hidePrintedDate(maskCtx, mask);
 
   flowers.querySelectorAll("span").forEach((span, i) => {
     const canvas = document.createElement("canvas");
@@ -190,6 +223,7 @@ async function setupScratch() {
     const ctx = canvas.getContext("2d");
     const x = FLOWER_BOX.x + i * FLOWER_BOX.w;
     ctx.drawImage(bg, x * sourceScaleX, FLOWER_BOX.y * sourceScaleY, FLOWER_BOX.w * sourceScaleX, FLOWER_BOX.h * sourceScaleY, 0, 0, canvas.width, canvas.height);
+    hidePrintedDate(ctx, canvas);
     ctx.drawImage(sprite, i * sw, 0, sw, sprite.naturalHeight, 0, 0, canvas.width, canvas.height);
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineCap = ctx.lineJoin = "round";
@@ -198,9 +232,9 @@ async function setupScratch() {
     pads.push({ span, canvas, ctx, cells: new Set(), done: false });
   });
 
-  flowers.classList.add("scratchable");
-  dateImg.classList.add("show");
 }
+
+const scratchSetup = setupScratch();
 
 function markCells(pad, x, y) {
   const cw = pad.canvas.width / GRID_X, ch = pad.canvas.height / GRID_Y;
@@ -247,6 +281,7 @@ function clearPad(pad) {
 let last = null;
 flowers.addEventListener("pointerdown", (e) => {
   if (!flowers.classList.contains("scratchable")) return;
+  dateImg.classList.add("show");
   last = { x: e.clientX, y: e.clientY };
   flowers.setPointerCapture(e.pointerId);
   pads.forEach((p) => !p.done && scratch(p, last, last));
