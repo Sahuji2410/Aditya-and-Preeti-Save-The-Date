@@ -200,7 +200,6 @@ async function setupScratch() {
 
   flowers.classList.add("scratchable");
   dateImg.classList.add("show");
-  scratchHint.classList.add("show");
 }
 
 function markCells(pad, x, y) {
@@ -239,7 +238,7 @@ function clearPad(pad) {
   pad.span.classList.add("gone");
   if (pads.every((p) => p.done)) {
     flowers.classList.remove("scratchable");
-    scratchHint.classList.remove("show");
+    scratchHint.classList.add("hidden");
     dateImg.classList.add("revealed");
     petalBurst();
   }

@@ -273,11 +273,11 @@ body.locked { overflow: hidden; }
   font-size: calc(34 * var(--u));
   letter-spacing: .12em;
   color: var(--gold);
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
   transition: opacity .5s ease;
 }
-.scratch-hint.show { opacity: 1;}
+.scratch-hint.hidden { opacity: 0; }
 
 @keyframes hint {
   0%, 100% { opacity: 1; }
@@ -296,7 +296,7 @@ body.locked { overflow: hidden; }
 .countdown {
   left: 0;
   right: 0;
-  top: calc(2690 * var(--v));
+  top: calc(2698 * var(--v));
   display: flex;
   justify-content: center;
   align-items: baseline;
